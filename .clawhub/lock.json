@@ -36,6 +36,10 @@
     "n8n": {
       "version": "2.0.0",
       "installedAt": 1771159721709
+    },
+    "reflect-learn": {
+      "version": "2.0.0",
+      "installedAt": 1771159827439
     }
   }
 }
