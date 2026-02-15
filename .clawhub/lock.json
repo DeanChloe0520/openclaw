@@ -8,6 +8,10 @@
     "tavily-search": {
       "version": "1.0.0",
       "installedAt": 1771158685811
+    },
+    "get-tldr": {
+      "version": "1.0.0",
+      "installedAt": 1771159004310
     }
   }
 }
