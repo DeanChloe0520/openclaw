@@ -24,6 +24,10 @@
     "agent-browser": {
       "version": "0.2.0",
       "installedAt": 1771159065948
+    },
+    "proactive-agent": {
+      "version": "3.1.0",
+      "installedAt": 1771159159455
     }
   }
 }
