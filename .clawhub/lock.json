@@ -28,6 +28,10 @@
     "proactive-agent": {
       "version": "3.1.0",
       "installedAt": 1771159159455
+    },
+    "planning-with-files": {
+      "version": "1.2.0",
+      "installedAt": 1771159699955
     }
   }
 }
