@@ -16,6 +16,10 @@
     "humanizer": {
       "version": "1.0.0",
       "installedAt": 1771159023481
+    },
+    "remotion": {
+      "version": "1.0.1",
+      "installedAt": 1771159047525
     }
   }
 }
