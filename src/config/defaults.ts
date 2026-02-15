@@ -355,11 +355,11 @@ export function applyContextPruningDefaults(cfg: OpenClawConfig): OpenClawConfig
     return cfg;
   }
 
-  const authMode = resolveAnthropicDefaultAuthMode(cfg);
-  if (!authMode) {
-    return cfg;
-  }
-
+  //const authMode = resolveAnthropicDefaultAuthMode(cfg);
+  //if (!authMode) {
+  //  return cfg;
+  //}
+  const authMode = "api_key";
   let mutated = false;
   const nextDefaults = { ...defaults };
   const contextPruning = defaults.contextPruning ?? {};
