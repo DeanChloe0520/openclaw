@@ -348,7 +348,7 @@ function resolveConfiguredPlugins(
 
 function isPluginExplicitlyDisabled(cfg: OpenClawConfig, pluginId: string): boolean {
   const entry = cfg.plugins?.entries?.[pluginId];
-  return entry?.enabled === false;
+  return entry?.enabled === true;
 }
 
 function isPluginDenied(cfg: OpenClawConfig, pluginId: string): boolean {
