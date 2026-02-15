@@ -399,7 +399,12 @@ PASSWORD - 服务密码
 ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 在 OpenClaw 的系统提示词中添加 Web 抓取指导。
+（原方式：在Dockerfile找到 COPY . . 这一行
 
+# Modify system prompt to include web_fetch guidance    
+RUN sed -i '/If a task is more complex or takes longer/a\    "## Web Fetching",\n    "When the user asks about current information, news, weather, stock prices, or anything requiring real-time data:",\n    "1. Use web_fetch to retrieve content from relevant websites",\n    "2. Extract the information needed from the fetched content",\n    "3. Provide the user with the most recent information",\n    "Do not say you cannot access the internet; instead, use web_fetch to get the information.",\n    "Always prefer using web_fetch for current/real-time information.",' src/agents/system-prompt.ts  
+
+）
 
 代码详解
 
