@@ -137,6 +137,10 @@ OpenClaw 会在第二次消息时正常响应
 
 部署流程总结
 
+硬盘（Volumes）挂载配置：
+
+硬盘 ID	openclaw-state	
+挂载目录	/root/.openclaw
 
 
 1. 初始部署 OpenClaw  
@@ -180,3 +184,215 @@ Zeabur 环境变量	添加 OPENAI_API_KEY
 Telegram 轮询模式正常工作
 
 Bot 能够接收消息并生成智能回复
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+部署 OpenClaw 项目修改的所有变量
+
+1. 环境变量（Zeabur 中添加）
+
+变量名	值	用途
+OPENAI_API_KEY	sk-...	OpenAI API 认证
+TELEGRAM_BOT_TOKEN	85595...	Telegram Bot 认证
+TELEGRAM_ADMIN_ID	8062134750	Telegram 管理员 ID
+NODE_ENV	production	Node.js 环境
+OPENCLAW_GATEWAY_PASSWORD	Zs15600770520.	Gateway 密码
+OPENCLAW_GATEWAY_TOKEN	JonesyBaby0520.	Gateway Token
+PASSWORD	DY0W8OcKlI5vN73xV1F26SdkZzoqw9X4	服务密码
+PORT	${WEB_PORT}	端口变量
+
+
+2. 源代码变量修改
+
+文件：/src/agents/defaults.ts
+
+修改前：
+
+
+typescript
+
+
+export const DEFAULT_PROVIDER = "anthropic";  
+export const DEFAULT_MODEL = "claude-opus-4-6";  
+
+修改后：
+
+
+typescript
+
+
+export const DEFAULT_PROVIDER = "openai";  
+export const DEFAULT_MODEL = "gpt-4o-mini";  
+
+
+文件：/src/config/defaults.ts
+
+修改 1 - DEFAULT_MODEL_ALIASES（第 15-26 行）
+
+修改前：
+
+
+typescript
+
+
+const DEFAULT_MODEL_ALIASES: Readonly<Record<string, string>> = {  
+  // Anthropic (pi-ai catalog uses "latest" ids without date suffix)  
+  opus: "anthropic/claude-opus-4-6",  
+  sonnet: "anthropic/claude-sonnet-4-5",  
+  // OpenAI  
+  gpt: "openai/gpt-5.2",  
+  "gpt-mini": "openai/gpt-5-mini",  
+  // Google Gemini (3.x are preview ids in the catalog)  
+  gemini: "google/gemini-3-pro-preview",  
+  "gemini-flash": "google/gemini-3-flash-preview",  
+};  
+
+修改后：
+
+
+typescript
+
+
+const DEFAULT_MODEL_ALIASES: Readonly<Record<string, string>> = {  
+  // Anthropic (pi-ai catalog uses "latest" ids without date suffix)  
+  opus: "openai/gpt-4o-mini",  
+  sonnet: "openai/gpt-4o-mini",  
+  // OpenAI  
+  gpt: "openai/gpt-4o-mini",  
+  "gpt-mini": "openai/gpt-4o-mini",  
+  // Google Gemini (3.x are preview ids in the catalog)  
+  gemini: "openai/gpt-4o-mini",  
+  "gemini-flash": "openai/gpt-4o-mini",  
+};  
+
+
+修改 2 - applyContextPruningDefaults 函数（第 269-365 行）
+
+修改前：
+
+
+typescript
+
+
+const authMode = resolveAnthropicDefaultAuthMode(cfg);  
+if (!authMode) {  
+  return cfg;  
+}  
+
+修改后：
+
+
+typescript
+
+
+//const authMode = resolveAnthropicDefaultAuthMode(cfg);  
+//if (!authMode) {  
+//  return cfg;  
+//}  
+const authMode = "api_key";  
+
+
+修改 3 - heartbeat.every 条件（第 365 行）
+
+修改前：
+
+
+typescript
+
+
+every: authMode === "oauth" ? "1h" : "30m",  
+
+修改后：
+
+
+typescript
+
+
+every: "30m",  
+
+
+3. 变量修改总结表
+
+类别	变量/常量	修改前	修改后	原因
+源代码	DEFAULT_PROVIDER	"anthropic"	"openai"	使用 OpenAI 作为默认 AI 提供商
+源代码	DEFAULT_MODEL	"claude-opus-4-6"	"gpt-4o-mini"	使用 OpenAI 的 gpt-4o-mini 模型
+源代码	DEFAULT_MODEL_ALIASES	多个 Anthropic 模型	全部改为 "openai/gpt-4o-mini"	统一使用 OpenAI 模型
+源代码	authMode 赋值	函数调用	硬编码 "api_key"	跳过 Anthropic 认证检查
+源代码	heartbeat.every	条件判断	硬编码 "30m"	避免 TypeScript 类型错误
+环境变量	OPENAI_API_KEY	无	你的 API Key	OpenAI 认证
+环境变量	TELEGRAM_BOT_TOKEN	无	Bot Token	Telegram 认证
+环境变量	TELEGRAM_ADMIN_ID	无	8062134750	Telegram 管理员权限
+
+
+关键要点
+
+✅ 最重要的修改：
+
+/src/agents/defaults.ts - 改 DEFAULT_PROVIDER 和 DEFAULT_MODEL
+
+/src/config/defaults.ts - 改 DEFAULT_MODEL_ALIASES
+
+Zeabur 环境变量 - 添加 OPENAI_API_KEY、TELEGRAM_BOT_TOKEN、TELEGRAM_ADMIN_ID
+
+⚠️ 未生效的修改：
+
+环境变量 OPENCLAW_AGENTS_DEFAULTS_MODEL_PRIMARY 等（OpenClaw 不读取这些）
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+OpenClaw 服务环境变量
+
+完整环境变量列表
+
+
+#	变量名	值	用途
+1	OPENCLAW_GATEWAY_PASSWORD	Zs15600770520.	OpenClaw Gateway 密码
+2	NODE_ENV	production	Node.js 环境（生产环境）
+3	OPENAI_API_KEY	sk-...	OpenAI API 认证密钥
+4	TELEGRAM_BOT_TOKEN	85595...	Telegram Bot 认证令牌
+5	PORT	${WEB_PORT}	Web 服务端口（Zeabur 变量）
+6	PASSWORD	DY0W8OcKlI5vN73xV1F26SdkZzoqw9X4	服务访问密码
+7	OPENCLAW_GATEWAY_TOKEN	JonesyBaby0520.	OpenClaw Gateway 令牌
+8	TELEGRAM_ADMIN_ID	8062134750	Telegram 管理员 ID
+9	OPENCLAW_AGENTS_DEFAULTS_MODEL_PROVIDER	openai	AI 提供商（OpenAI）
+10	OPENCLAW_AGENTS_DEFAULTS_MODEL_MODEL	gpt-4o-mini	AI 模型名称
+
+
+环境变量分类
+
+🔐 认证相关（4个）
+
+
+OPENAI_API_KEY - OpenAI 认证
+
+TELEGRAM_BOT_TOKEN - Telegram Bot 认证
+
+OPENCLAW_GATEWAY_PASSWORD - Gateway 密码
+
+OPENCLAW_GATEWAY_TOKEN - Gateway 令牌
+
+
+🤖 AI 模型配置（2个）
+
+
+OPENCLAW_AGENTS_DEFAULTS_MODEL_PROVIDER - 提供商：openai
+
+OPENCLAW_AGENTS_DEFAULTS_MODEL_MODEL - 模型：gpt-4o-mini
+
+
+📱 Telegram 配置（1个）
+
+
+TELEGRAM_ADMIN_ID - 管理员 ID：8062134750
+
+
+⚙️ 系统配置（3个）
+
+
+NODE_ENV - 环境：production
+
+PORT - 端口：${WEB_PORT}
+
+PASSWORD - 服务密码
+
+
+
+总计：10 个环境变量
