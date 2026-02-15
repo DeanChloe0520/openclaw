@@ -21,6 +21,10 @@ import {
 const SEARCH_PROVIDERS = ["brave", "perplexity", "grok", "tavily"] as const;
 const DEFAULT_SEARCH_COUNT = 5;
 const MAX_SEARCH_COUNT = 10;
+// Tavily API 配置  
+const TAVILY_API_ENDPOINT = "https://api.tavily.com/search";  
+const DEFAULT_TAVILY_INCLUDE_ANSWER = true;  
+const DEFAULT_TAVILY_MAX_RESULTS = 5;  
 
 const BRAVE_SEARCH_ENDPOINT = "https://api.search.brave.com/res/v1/web/search";
 const DEFAULT_PERPLEXITY_BASE_URL = "https://openrouter.ai/api/v1";
