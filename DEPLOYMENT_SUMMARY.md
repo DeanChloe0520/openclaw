@@ -396,3 +396,123 @@ PASSWORD - 服务密码
 
 
 总计：10 个环境变量
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+在 OpenClaw 的系统提示词中添加 Web 抓取指导。
+
+
+代码详解
+
+bash
+
+
+RUN sed -i '/If a task is more complex or takes longer/a\  
+    "## Web Fetching",\n  
+    "When the user asks about current information, news, weather, stock prices, or anything requiring real-time data:",\n  
+    "1. Use web_fetch to retrieve content from relevant websites",\n  
+    "2. Extract the information needed from the fetched content",\n  
+    "3. Provide the user with the most recent information",\n  
+    "Do not say you cannot access the internet; instead, use web_fetch to get the information.",\n  
+    "Always prefer using web_fetch for current/real-time information.",' src/agents/system-prompt.ts  
+
+命令分解
+
+部分	说明
+sed -i	使用 sed 命令直接修改文件（in-place edit）
+/If a task is more complex or takes longer/	查找这行文本作为锚点
+a\	在找到的行之后添加内容（append）
+"## Web Fetching"	添加的新章节标题
+src/agents/system-prompt.ts	要修改的文件
+
+
+具体作用
+
+修改前的系统提示词：
+
+
+
+...  
+If a task is more complex or takes longer...  
+[其他内容]  
+
+修改后的系统提示词：
+
+
+...  
+If a task is more complex or takes longer...  
+## Web Fetching  
+When the user asks about current information, news, weather, stock prices, or anything requiring real-time data:
+1. Use web_fetch to retrieve content from relevant websites
+2. Extract the information needed from the fetched content
+3. Provide the user with the most recent information  
+Do not say you cannot access the internet; instead, use web_fetch to get the information.  
+Always prefer using web_fetch for current/real-time information.  
+[其他内容]  
+
+
+这段代码的目的
+
+告诉 AI 模型（OpenClaw）：
+
+
+✅ 有 Web 抓取能力 - 可以使用 web_fetch 工具
+
+✅ 何时使用 - 当需要实时信息时
+
+✅ 如何使用 - 具体的使用步骤
+
+✅ 改变行为 - 不要说"我无法访问互联网"，而是使用 web_fetch
+
+
+
+实际效果
+
+用户问： "今天天气怎么样？"
+
+修改前的行为：
+
+
+
+
+AI: 我无法访问实时天气信息，因为我没有互联网访问权限。  
+
+修改后的行为：
+
+
+
+
+AI: 我来帮你查询最新的天气信息。  
+[使用 web_fetch 获取天气数据]  
+AI: 根据最新数据，今天的天气是...  
+
+
+在你的 OpenClaw 项目中的应用
+
+如果你想添加这个功能到你的 OpenClaw Bot，可以：
+
+
+
+在 Dockerfile 中添加这行命令
+
+重新部署服务
+
+Telegram Bot 就会获得 Web 抓取能力
+
+
+修改后的 Dockerfile 示例：
+
+dockerfile
+
+
+FROM [base image]  
+...  
+# 添加 Web 抓取指导到系统提示词  
+RUN sed -i '/If a task is more complex or takes longer/a\  
+    "## Web Fetching",\n  
+    "When the user asks about current information, news, weather, stock prices, or anything requiring real-time data:",\n  
+    "1. Use web_fetch to retrieve content from relevant websites",\n  
+    "2. Extract the information needed from the fetched content",\n  
+    "3. Provide the user with the most recent information",\n  
+    "Do not say you cannot access the internet; instead, use web_fetch to get the information.",\n  
+    "Always prefer using web_fetch for current/real-time information.",' src/agents/system-prompt.ts  
+...  
